@@ -3,66 +3,49 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Jabalpur Helper Agent</title>
+<title>Jabalpur Search - Kuch Bhi Pucho Jabalpur Me</title>
 <style>
-*{box-sizing:border-box;font-family:system-ui} body{margin:0;background:#FFF7ED}
-header{background:#EA580C;color:#fff;padding:20px;text-align:center}
-header h1{margin:0;font-size:24px} header p{margin:6px 0 0}
-.box{max-width:600px;margin:14px auto;padding:0 12px}
-.card{background:#fff;border-radius:16px;padding:16px;box-shadow:0 4px 20px rgba(0,0,0,.08);margin-bottom:12px}
-button{border:0;border-radius:12px;padding:13px 16px;font-size:15px;font-weight:700;cursor:pointer;margin:4px}
-.orange{background:#EA580C;color:#fff} .green{background:#16A34A;color:#fff} .blue{background:#2563EB;color:#fff}
-#chat{height:260px;overflow:auto;background:#FFFBEB;border-radius:12px;padding:12px}
-.msg{padding:10px 12px;border-radius:12px;margin-bottom:8px;max-width:88%}
-.me{background:#EA580C;color:#fff;margin-left:auto} .bot{background:#fff;border:1px solid #FED7AA}
-input[type=text]{width:100%;padding:13px;border-radius:12px;border:2px solid #FDBA74;font-size:16px}
-#preview{width:100%;border-radius:12px;margin-top:10px;display:none}
+body{font-family:Arial;background:#fff;margin:0;padding:15px}
+.box{max-width:600px;margin:auto;text-align:center;padding-top:30px}
+h1{font-size:42px;margin:0;color:#4285F4}
+h1 span{color:#EA4335} h1 b{color:#FBBC05} h1 i{color:#34A853;font-style:normal}
+input{width:90%;padding:15px;border-radius:30px;border:1px solid #ddd;font-size:17px;box-shadow:0 2px 10px rgba(0,0,0,0.1);outline:none}
+.btn{padding:12px 25px;border:0;border-radius:25px;background:#f8f9fa;margin:10px 5px;font-size:15px;cursor:pointer}
+.btn2{background:#EA580C;color:white}
+#ans{text-align:left;background:#FFF7ED;padding:18px;border-radius:15px;margin-top:20px;line-height:1.7;white-space:pre-line;display:none}
+.card{background:white;border:1px solid #eee;padding:12px;border-radius:12px;margin:8px 0;text-align:left;cursor:pointer}
 </style>
 </head>
 <body>
-<header>
-<h1>🙏 Jabalpur Helper Agent</h1>
-<p>Likhne Wala + Bolne Wala + Photo Wala - Teenon Option!</p>
-</header>
 <div class="box">
-<div class="card">
-<b>1. LIKHNE WALA ✍️</b><br><br>
-<input type="text" id="q" placeholder="Yahan likho... jaise - Mandi bhav kya hai?">
-<br><br>
-<button class="orange" onclick="sendText()">✍️ Likh Ke Bhejo</button>
-</div>
-<div class="card">
-<b>2. BOLNE WALA 🎤🔊</b><br><br>
-<button class="green" onclick="startVoice()">🎤 Bol Ke Puchho</button>
-<button class="blue" onclick="speakLast()">🔊 Bol Ke Sunao</button>
-<p>Mic dabao, bol do, ye khud bol ke jawab dega!</p>
-</div>
-<div class="card">
-<b>3. PHOTO WALA 📸</b><br><br>
-<input type="file" id="photo" accept="image/*" onchange="readPhoto(event)">
-<img id="preview">
-<p id="photoResult"></p>
-<p>Parchi / Board / Dawai ki photo yahan daalo!</p>
-</div>
-<div class="card"><div id="chat"><div class="msg bot">Namaste! 🙏 Main Jabalpur ka dost hu. Likh sakte ho, bol sakte ho, photo bhej sakte ho!</div></div></div>
+<h1>J<span>a</span><b>b</b><i>a</i>lpur!</h1>
+<p style="color:#666;font-size:18px;font-weight:bold">Kuch bhi pucho Jabalpur me ❤️</p>
+<input id="q" placeholder="Kuch bhi pucho Jabalpur me..." onkeydown="if(event.key==='Enter')search()">
+<br>
+<button class="btn" onclick="search()">🔍 Search Karo</button>
+<button class="btn btn2" onclick="lucky()">✨ Lucky</button>
+<div id="ans"></div>
+<div id="quick" style="margin-top:20px"></div>
 </div>
 <script>
-let lastAnswer="Namaste! Main Jabalpur ka dost hu.";
-function addMsg(t,who){let d=document.createElement('div');d.className='msg '+who;d.innerText=t;document.getElementById('chat').appendChild(d);document.getElementById('chat').scrollTop=9999;}
-function getAnswer(q){
-q=q.toLowerCase();
-if(q.includes('mandi')||q.includes('bhav')||q.includes('gehu')) return "🌾 Jabalpur Mandi: Gehun ₹2425, Soya ₹4850, Chana ₹5350 per quintal.";
-if(q.includes('mausam')||q.includes('barish')) return "🌦️ Jabalpur me aaj mausam saaf hai, 32°C, barish nahi hai.";
-if(q.includes('bus')) return "🚌 Jabalpur se Katni bus - 7:00, 9:30, 2:00 baje.";
-if(q.includes('doctor')||q.includes('bukhar')) return "🏥 District Hospital Jabalpur me subah 9 se 2 baje OPD hai.";
-if(q.includes('yojana')) return "📄 Ladli Behna ₹1250 mahina, PM Kisan ₹6000 saal, Ayushman Card se 5 lakh tak free ilaj.";
-return "Samajh gaya! Mandi bhav, Mausam, Bus, Doctor ya Yojana - kuch bhi pucho, main bol ke bata dunga!";
+let quicks=["Jabalpur","Taj Mahal","Virat Kohli","Madhya Pradesh","Narmada River","Best College Jabalpur","Mausam Jabalpur"];
+document.getElementById('quick').innerHTML=quicks.map(k=>`<div class="card" onclick="document.getElementById('q').value='${k}';search()">🔍 ${k}</div>`).join('');
+async function search(){
+let q=document.getElementById('q').value.trim();
+if(!q) return alert("Pehle kuch likho!");
+let box=document.getElementById('ans'); box.style.display='block';
+box.innerText="Dhoondh rahi hun... '"+q+"'... ⏳";
+try{
+let r=await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(q)}`);
+let d=await r.json();
+if(d.extract){ box.innerText=`✅ ${d.title}\n\n${d.extract}\n\n🔗 https://en.wikipedia.org/wiki/${encodeURIComponent(q)}`; return; }
+}catch(e){}
+box.innerHTML=`Iska jawab Google par pakka milega! 👇<br><br><a href="https://www.google.com/search?q=${encodeURIComponent(q)}" target="_blank" style="background:#4285F4;color:white;padding:12px 20px;border-radius:20px;text-decoration:none;display:inline-block">Google par dekho - ${q}</a>`;
 }
-function sendText(){let v=document.getElementById('q').value.trim();if(!v)return;addMsg(v,'me');let a=getAnswer(v);lastAnswer=a;addMsg(a,'bot');speakLast();document.getElementById('q').value='';}
-function speakLast(){try{let u=new SpeechSynthesisUtterance(lastAnswer);u.lang='hi-IN';speechSynthesis.cancel();speechSynthesis.speak(u);}catch(e){}}
-function startVoice(){try{let R=window.SpeechRecognition||window.webkitSpeechRecognition;let r=new R();r.lang='hi-IN';r.onresult=function(e){document.getElementById('q').value=e.results[0][0].transcript;sendText();};r.start();alert('Ab bolo... sun raha hu 🎤');}catch(e){alert('Mic nahi chala, likh ke puch lo!');}}
-function readPhoto(e){let f=e.target.files[0];if(!f)return;let url=URL.createObjectURL(f);let img=document.getElementById('preview');img.src=url;img.style.display='block';let msg="📸 Photo mil gayi! Maine photo dekh li. Ye parchi / board / dawai ki photo hai. Saaf dikh rahi hai!";lastAnswer=msg;addMsg("Photo bhej di 📸",'me');addMsg(msg,'bot');document.getElementById('photoResult').innerText=msg;speakLast();}
-document.getElementById('q').addEventListener('keydown',e=>{if(e.key==='Enter')sendText();});
+function lucky(){
+let a=["Jabalpur","Narmada nadi","Taj Mahal","Madhya Pradesh"];
+document.getElementById('q').value=a[Math.floor(Math.random()*a.length)]; search();
+}
 </script>
 </body>
 </html>
