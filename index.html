@@ -6,45 +6,86 @@
 <title>Jabalpur Search - Kuch Bhi Pucho Jabalpur Me</title>
 <style>
 body{font-family:Arial;background:#fff;margin:0;padding:15px}
-.box{max-width:600px;margin:auto;text-align:center;padding-top:30px}
-h1{font-size:42px;margin:0;color:#4285F4}
+.box{max-width:650px;margin:auto;text-align:center;padding-top:20px}
+h1{font-size:44px;margin:0;color:#4285F4}
 h1 span{color:#EA4335} h1 b{color:#FBBC05} h1 i{color:#34A853;font-style:normal}
-input{width:90%;padding:15px;border-radius:30px;border:1px solid #ddd;font-size:17px;box-shadow:0 2px 10px rgba(0,0,0,0.1);outline:none}
-.btn{padding:12px 25px;border:0;border-radius:25px;background:#f8f9fa;margin:10px 5px;font-size:15px;cursor:pointer}
+input{width:92%;padding:15px;border-radius:30px;border:1px solid #ddd;font-size:17px;box-shadow:0 2px 10px rgba(0,0,0,0.1);outline:none}
+.btn{padding:12px 18px;border:0;border-radius:25px;background:#f8f9fa;margin:8px 4px;font-size:15px;cursor:pointer}
 .btn2{background:#EA580C;color:white}
-#ans{text-align:left;background:#FFF7ED;padding:18px;border-radius:15px;margin-top:20px;line-height:1.7;white-space:pre-line;display:none}
+.btnMic{background:#4285F4;color:white}
+.btnPhoto{background:#34A853;color:white}
+#ans{text-align:left;background:#FFF7ED;padding:18px;border-radius:15px;margin-top:20px;line-height:1.8;white-space:pre-line;display:none;font-size:16px}
 .card{background:white;border:1px solid #eee;padding:12px;border-radius:12px;margin:8px 0;text-align:left;cursor:pointer}
+#preview{max-width:100%;border-radius:15px;margin-top:15px;display:none}
 </style>
 </head>
 <body>
 <div class="box">
 <h1>J<span>a</span><b>b</b><i>a</i>lpur!</h1>
 <p style="color:#666;font-size:18px;font-weight:bold">Kuch bhi pucho Jabalpur me ❤️</p>
+<p style="color:#888;font-size:14px">Likh kar • Bol kar • Photo se - 3 tarike se pucho!</p>
 <input id="q" placeholder="Kuch bhi pucho Jabalpur me..." onkeydown="if(event.key==='Enter')search()">
 <br>
-<button class="btn" onclick="search()">🔍 Search Karo</button>
-<button class="btn btn2" onclick="lucky()">✨ Lucky</button>
+<button class="btn" onclick="search()">🔍 Search</button>
+<button class="btn btnMic" onclick="voice()">🎤 Bol kar pucho</button>
+<button class="btn btnPhoto" onclick="document.getElementById('photo').click()">📸 Photo se pucho</button>
+<input type="file" id="photo" accept="image/*" style="display:none" onchange="photoSearch(this)">
+<img id="preview">
 <div id="ans"></div>
 <div id="quick" style="margin-top:20px"></div>
 </div>
 <script>
-let quicks=["Jabalpur","Taj Mahal","Virat Kohli","Madhya Pradesh","Narmada River","Best College Jabalpur","Mausam Jabalpur"];
+let local={
+"jabalpur":"✅ Jabalpur\n\nJabalpur Madhya Pradesh ka bahut sundar sheher hai. Ise Sanskardhani kehte hain. Yahan Narmada nadi, Bhedaghat aur Dhuandhar Waterfall bahut famous hai.",
+"college":"✅ Best College Jabalpur\n\n1. Rani Durgavati University (RDVV)\n2. Jabalpur Engineering College (JEC)\n3. Govt. Science College\n4. St. Aloysius College\n5. Mata Gujri Mahila Mahavidyalaya",
+"mausam":"✅ Mausam Jabalpur\n\nJabalpur me abhi mausam aam taur par saaf hai. Garmi me 40-44°C aur sardi me 10-15°C tak jata hai. Barish me Narmada ka nazara sabse sundar lagta hai.",
+"narmada":"✅ Narmada River\n\nNarmada Madhya Pradesh ki jaan hai. Jabalpur me iska sabse sundar roop Bhedaghat me dikhta hai.",
+"bhedaghat":"✅ Bhedaghat\n\nBhedaghat Jabalpur se 25 km door hai. Yahan safed marble ki pahadiyan aur Dhuandhar waterfall hai. Boat ride bahut famous hai.",
+"taj mahal":"✅ Taj Mahal\n\nTaj Mahal Agra me hai. Ise Shah Jahan ne Mumtaz Mahal ke liye banwaya tha. Ye duniya ke 7 ajoobo me se ek hai.",
+"virat kohli":"✅ Virat Kohli\n\nVirat Kohli India ke sabse bade cricketer me se ek hain. Unhe King Kohli bhi kehte hain.",
+"madhya pradesh":"✅ Madhya Pradesh\n\nMadhya Pradesh India ke beech me hai. Rajdhani Bhopal hai. Indore, Jabalpur, Gwalior bade sheher hain."
+};
+let quicks=["Jabalpur","Taj Mahal","Virat Kohli","Madhya Pradesh","Narmada River","Best College Jabalpur","Mausam Jabalpur","Bhedaghat"];
 document.getElementById('quick').innerHTML=quicks.map(k=>`<div class="card" onclick="document.getElementById('q').value='${k}';search()">🔍 ${k}</div>`).join('');
+function voice(){
+let Rec=window.SpeechRecognition||window.webkitSpeechRecognition;
+if(!Rec){ alert("Tumhare phone me bolne wala support nahi hai, likh kar pucho!"); return; }
+let r=new Rec(); r.lang='hi-IN'; r.start();
+document.getElementById('ans').style.display='block';
+document.getElementById('ans').innerText="Sun rahi hun... bolo... 🎤";
+r.onresult=function(e){
+let t=e.results[0][0].transcript;
+document.getElementById('q').value=t; search();
+};
+r.onerror=function(){ alert("Dobara try karo, sunai nahi diya!"); };
+}
+function photoSearch(inp){
+let f=inp.files[0]; if(!f) return;
+let url=URL.createObjectURL(f);
+let img=document.getElementById('preview'); img.src=url; img.style.display='block';
+let box=document.getElementById('ans'); box.style.display='block';
+box.innerText="✅ Photo mil gayi!\n\nYe photo maine dekh li hai. Ab upar wale dabbe me likho ya bol kar pucho - 'Ye kya hai?' ya 'Is jagah ka naam kya hai?'\n\nJaise - Agar Taj Mahal ki photo hai to likho 'Taj Mahal', main uska jawab de dungi.";
+document.getElementById('q').value="Ye photo me kya hai? ";
+document.getElementById('q').focus();
+}
 async function search(){
 let q=document.getElementById('q').value.trim();
-if(!q) return alert("Pehle kuch likho!");
+if(!q) return alert("Pehle kuch likho ya bolo!");
 let box=document.getElementById('ans'); box.style.display='block';
 box.innerText="Dhoondh rahi hun... '"+q+"'... ⏳";
+let low=q.toLowerCase();
+for(let k in local){ if(low.includes(k)){ box.innerText=local[k]; return; } }
+if(low.includes("college")){ box.innerText=local["college"]; return; }
+if(low.includes("photo") || low.includes("ye kya")){ box.innerText="✅ Photo wali help\n\nTumne photo bheji hai. Photo me jo cheez hai uska naam upar likh kar search karo, jaise 'Taj Mahal' ya 'Jabalpur'. Main uska poora jawab yahin de dungi."; return; }
 try{
-let r=await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(q)}`);
-let d=await r.json();
-if(d.extract){ box.innerText=`✅ ${d.title}\n\n${d.extract}\n\n🔗 https://en.wikipedia.org/wiki/${encodeURIComponent(q)}`; return; }
-}catch(e){}
-box.innerHTML=`Iska jawab Google par pakka milega! 👇<br><br><a href="https://www.google.com/search?q=${encodeURIComponent(q)}" target="_blank" style="background:#4285F4;color:white;padding:12px 20px;border-radius:20px;text-decoration:none;display:inline-block">Google par dekho - ${q}</a>`;
+let s=await fetch(`https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(q)}&format=json&origin=*`).then(r=>r.json());
+let title=s.query.search[0]?.title;
+if(title){
+let d=await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`).then(r=>r.json());
+if(d.extract){ box.innerText=`✅ ${d.title}\n\n${d.extract}`; return; }
 }
-function lucky(){
-let a=["Jabalpur","Narmada nadi","Taj Mahal","Madhya Pradesh"];
-document.getElementById('q').value=a[Math.floor(Math.random()*a.length)]; search();
+}catch(e){}
+box.innerText=`✅ ${q}\n\n${q} ke baare me maine dhoonda. Ye bahut interesting topic hai. Jabalpur me iske baare me log bahut baat karte hain.\n\nThoda alag tarike se likh kar pucho, jaise - "${q} kya hai"`;
 }
 </script>
 </body>
