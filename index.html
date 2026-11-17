@@ -1,94 +1,315 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Jabalpur Search - Kuch Bhi Pucho Jabalpur Me</title>
-<style>
-body{font-family:Arial;background:#fff;margin:0;padding:15px}
-.box{max-width:650px;margin:auto;text-align:center;padding-top:20px}
-h1{font-size:44px;margin:0;color:#4285F4}
-h1 span{color:#EA4335} h1 b{color:#FBBC05} h1 i{color:#34A853;font-style:normal}
-input{width:92%;padding:15px;border-radius:30px;border:1px solid #ddd;font-size:17px;box-shadow:0 2px 10px rgba(0,0,0,0.1);outline:none}
-.btn{padding:12px 18px;border:0;border-radius:25px;background:#f8f9fa;margin:8px 4px;font-size:15px;cursor:pointer}
-.btnMic{background:#4285F4;color:white}
-.btnPhoto{background:#34A853;color:white}
-#ans{text-align:left;background:#FFF7ED;padding:18px;border-radius:15px;margin-top:20px;line-height:1.8;white-space:pre-line;display:none;font-size:16px}
-.card{background:white;border:1px solid #eee;padding:12px;border-radius:12px;margin:8px 0;text-align:left;cursor:pointer}
-#preview{max-width:100%;border-radius:15px;margin-top:15px;display:none}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jabalpur AI Tourist Guide - Sanskardhani Helper</title>
+    <style>
+        :root {
+            --primary: #0f766e;
+            --secondary: #f59e0b;
+            --bg-dark: #0f172a;
+            --chat-bg: #f8fafc;
+            --user-msg: #0f766e;
+            --bot-msg: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+            height: 92vh;
+            background: var(--chat-bg);
+            border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Header & Custom Logo */
+        .header {
+            background: linear-gradient(135deg, #0f766e, #115e59);
+            color: white;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .logo-box {
+            width: 52px;
+            height: 52px;
+            background: white;
+            border-radius: 14px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            flex-shrink: 0;
+        }
+
+        .header-info h1 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+
+        .header-info p {
+            font-size: 0.78rem;
+            color: #ccfbf1;
+            margin-top: 2px;
+        }
+
+        /* Quick Chips */
+        .quick-bar {
+            display: flex;
+            gap: 8px;
+            padding: 10px 14px;
+            background: #e2e8f0;
+            overflow-x: auto;
+            white-space: nowrap;
+            scrollbar-width: none;
+        }
+        .quick-bar::-webkit-scrollbar { display: none; }
+
+        .chip {
+            background: white;
+            color: #0f766e;
+            border: 1px solid #cbd5e1;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .chip:hover {
+            background: #0f766e;
+            color: white;
+        }
+
+        /* Chat Area */
+        .chat-box {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .message {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 0.92rem;
+            line-height: 1.5;
+            position: relative;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .bot-message {
+            background: var(--bot-msg);
+            color: #1e293b;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .user-message {
+            background: var(--user-msg);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .user-message img {
+            max-width: 100%;
+            border-radius: 10px;
+            margin-top: 6px;
+            display: block;
+        }
+
+        /* Action Buttons inside Bot Message */
+        .card-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .map-btn, .google-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            text-decoration: none;
+            padding: 7px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .map-btn {
+            background: #fef3c7;
+            color: #b45309;
+            border: 1px solid #f59e0b;
+        }
+        .map-btn:hover { background: #fde68a; }
+
+        .google-btn {
+            background: #e0f2fe;
+            color: #0369a1;
+            border: 1px solid #38bdf8;
+        }
+        .google-btn:hover { background: #bae6fd; }
+
+        /* Image Preview Bar */
+        #imagePreviewContainer {
+            display: none;
+            padding: 8px 16px;
+            background: #e2e8f0;
+            align-items: center;
+            justify-content: space-between;
+        }
+        #imagePreviewContainer img {
+            height: 45px;
+            border-radius: 6px;
+        }
+
+        /* Input Footer */
+        .input-area {
+            padding: 12px;
+            background: white;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            background: #f1f5f9;
+            border: none;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            color: #0f766e;
+            font-size: 1.2rem;
+            transition: 0.2s;
+            flex-shrink: 0;
+        }
+
+        .icon-btn:hover { background: #e2e8f0; }
+        .icon-btn.recording {
+            background: #ef4444;
+            color: white;
+            animation: pulse 1.2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 11px 15px;
+            border: 1px solid #cbd5e1;
+            border-radius: 22px;
+            outline: none;
+            font-size: 0.92rem;
+        }
+        input[type="text"]:focus { border-color: #0f766e; }
+
+        .send-btn {
+            background: #0f766e;
+            color: white;
+        }
+        .send-btn:hover { background: #115e59; }
+    </style>
 </head>
 <body>
-<div class="box">
-<h1>J<span>a</span><b>b</b><i>a</i>lpur!</h1>
-<p style="color:#666;font-size:18px;font-weight:bold">Kuch bhi pucho Jabalpur me ❤️</p>
-<p style="color:#888;font-size:14px">Likh kar • Bol kar • Photo se - 3 tarike se pucho!</p>
-<input id="q" placeholder="Kuch bhi pucho Jabalpur me..." onkeydown="if(event.key==='Enter')search()">
-<br>
-<button class="btn" onclick="search()">🔍 Search</button>
-<button class="btn btnMic" onclick="voice()">🎤 Bol kar pucho</button>
-<button class="btn btnPhoto" onclick="document.getElementById('photo').click()">📸 Photo se pucho</button>
-<input type="file" id="photo" accept="image/*" style="display:none" onchange="photoSearch(this)">
-<img id="preview">
-<div id="ans"></div>
-<div id="quick" style="margin-top:20px"></div>
-</div>
-<script>
-let local={
-"best khana":"✅ Best Khana Jabalpur Me\n\n1. Indian Coffee House - South Indian, Dosa\n2. Sagar Gaire - Poha Jalebi, Samosa\n3. Raju Tea Stall, Wright Town - Chai\n4. Gole Bazaar - Chaat, Pani Puri\n5. Firodiya - Sweets\n\nTumhe kya khana hai? Poha, Chaat ya Dosa?",
-"khana":"✅ Best Khana Jabalpur Me\n\n1. Indian Coffee House - South Indian, Dosa\n2. Sagar Gaire - Poha Jalebi, Samosa\n3. Gole Bazaar - Chaat, Pani Puri\n4. Firodiya - Sweets\n5. Wright Town - Chai aur Snacks\n\nBatao kya khana hai?",
-"jabalpur":"✅ Jabalpur\n\nJabalpur Madhya Pradesh ka bahut sundar sheher hai. Ise Sanskardhani kehte hain. Yahan Narmada nadi, Bhedaghat aur Dhuandhar Waterfall bahut famous hai.",
-"college":"✅ Best College Jabalpur\n\n1. Rani Durgavati University (RDVV)\n2. Jabalpur Engineering College (JEC)\n3. Govt. Science College\n4. St. Aloysius College\n5. Mata Gujri Mahila Mahavidyalaya",
-"mausam":"✅ Mausam Jabalpur\n\nJabalpur me abhi mausam aam taur par saaf hai. Garmi me 40-44°C aur sardi me 10-15°C tak jata hai. Barish me Narmada ka nazara sabse sundar lagta hai.",
-"narmada":"✅ Narmada River\n\nNarmada Madhya Pradesh ki jaan hai. Jabalpur me iska sabse sundar roop Bhedaghat me dikhta hai.",
-"bhedaghat":"✅ Bhedaghat\n\nBhedaghat Jabalpur se 25 km door hai. Yahan safed marble ki pahadiyan aur Dhuandhar waterfall hai. Boat ride bahut famous hai.",
-"taj mahal":"✅ Taj Mahal\n\nTaj Mahal Agra me hai. Ise Shah Jahan ne Mumtaz Mahal ke liye banwaya tha. Ye duniya ke 7 ajoobo me se ek hai.",
-"virat kohli":"✅ Virat Kohli\n\nVirat Kohli India ke sabse bade cricketer me se ek hain. Unhe King Kohli bhi kehte hain.",
-"madhya pradesh":"✅ Madhya Pradesh\n\nMadhya Pradesh India ke beech me hai. Rajdhani Bhopal hai. Indore, Jabalpur, Gwalior bade sheher hain."
-};
-let quicks=["Best Khana Jabalpur Me","Jabalpur","Taj Mahal","Virat Kohli","Madhya Pradesh","Narmada River","Best College Jabalpur","Mausam Jabalpur","Bhedaghat"];
-document.getElementById('quick').innerHTML=quicks.map(k=>`<div class="card" onclick="document.getElementById('q').value='${k}';search()">🔍 ${k}</div>`).join('');
-function voice(){
-let Rec=window.SpeechRecognition||window.webkitSpeechRecognition;
-if(!Rec){ alert("Tumhare phone me bolne wala support nahi hai, likh kar pucho!"); return; }
-let r=new Rec(); r.lang='hi-IN'; r.start();
-document.getElementById('ans').style.display='block';
-document.getElementById('ans').innerText="Sun rahi hun... bolo... 🎤";
-r.onresult=function(e){
-let t=e.results[0][0].transcript;
-document.getElementById('q').value=t; search();
-};
-r.onerror=function(){ alert("Dobara try karo, sunai nahi diya!"); };
-}
-function photoSearch(inp){
-let f=inp.files[0]; if(!f) return;
-let url=URL.createObjectURL(f);
-let img=document.getElementById('preview'); img.src=url; img.style.display='block';
-let box=document.getElementById('ans'); box.style.display='block';
-box.innerText="✅ Photo mil gayi!\n\nYe photo maine dekh li hai. Ab upar wale dabbe me likho ya bol kar pucho - 'Ye kya hai?' ya 'Is jagah ka naam kya hai?'";
-document.getElementById('q').value="Ye photo me kya hai? ";
-document.getElementById('q').focus();
-}
-async function search(){
-let q=document.getElementById('q').value.trim();
-if(!q) return alert("Pehle kuch likho ya bolo!");
-let box=document.getElementById('ans'); box.style.display='block';
-box.innerText="Dhoondh rahi hun... '"+q+"'... ⏳";
-let low=q.toLowerCase();
-// Pehle khana check karo, phir baaki - taaki khana wala sahi jawab aaye
-if(low.includes("khana")||low.includes("khaana")||low.includes("food")||low.includes("restaurant")||low.includes("hotel")){ box.innerText=local["best khana"]; return; }
-for(let k in local){ if(low.includes(k)){ box.innerText=local[k]; return; } }
-if(low.includes("college")){ box.innerText=local["college"]; return; }
-try{
-let s=await fetch(`https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(q)}&format=json&origin=*`).then(r=>r.json());
-let title=s.query.search[0]?.title;
-if(title){
-let d=await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`).then(r=>r.json());
-if(d.extract){ box.innerText=`✅ ${d.title}\n\n${d.extract}`; return; }
-}
-}catch(e){}
-box.innerText=`✅ ${q}\n\n${q} ke baare me maine dhoonda. Ye bahut interesting topic hai. Jabalpur me iske baare me log bahut baat karte hain.`;
-}
-</script>
-</body>
-</html>
+
+<div class="app-container">
+    <!-- Header with Custom Ek Number SVG Logo -->
+    <div class="header">
+        <div class="logo-box">
+            <svg width="40" height="40" viewBox="0 0 100 100" fill="none" xmlns="http://w3.org">
+                <circle cx="50" cy="50" r="46" fill="#0F766E"/>
+                <!-- Sun -->
+                <circle cx="50" cy="34" r="14" fill="#F59E0B"/>
+                <!-- Marble Rocks (Bhedaghat) -->
+                <path d="M18 70L34 40L48 62L64 36L82 70H18Z" fill="#F8FAFC"/>
+                <path d="M34 40L42 54L30 70H18L34 40Z" fill="#CBD5E1"/>
+                <!-- Narmada River Waves -->
+                <path d="M14 74C28 69 40 79 54 74C68 69 78 77 86 74V82C76 86 66 78 52 82C38 86 26 78 14 82V74Z" fill="#38BDF8"/>
+            </svg>
+        </div>
+        <div class="header-info">
+            <h1>Sanskardhani AI Guide</h1>
+            <p>Jabalpur Smart Tourist Assistant • Live Maps & Voice</p>
+        </div>
+    </div>
+
+    <!-- Quick Suggestions -->
+    <div class="quick-bar">
+        <button class="chip" onclick="quickAsk('Bhedaghat & Dhuandhar Falls')">🌊 Bhedaghat</button>
+        <button class="chip" onclick="quickAsk('Bargi Dam Jabalpur')">🚤 Bargi Dam</button>
+        <button class="chip" onclick="quickAsk('Madan Mahal Fort')">🏰 Madan Mahal</button>
+        <button class="chip" onclick="quickAsk('Jabalpur Famous Food')">🍲 Famous Food</button>
+        <button class="chip" onclick="quickAsk('Kachnar City Shiva Temple')">🕉️ Kachnar City</button>
+        <button class="chip" onclick="quickAsk('Balancing Rock Jabalpur')">🪨 Balancing Rock</button>
+    </div>
+
+    <!-- Chat Messages Area -->
+    <div class="chat-box" id="chatBox">
+        <div class="message bot-message">
+            <strong>Namaste! Sanskardhani Jabalpur mein aapka swagat hai! 🙏</strong><br><br>
+            Main aapka smart tourist helper hoon. Aap mujhse Jabalpur ki kisi bhi choti se choti jagah, khane-peene, hotel, ya rasta pooch sakte hain.<br><br>
+            🎙️ <b>Mic</b> dabakar bolein<br>
+            📷 <b>Photo</b> bhejkar jagah poochein<br>
+            📍 Seedha <b>Google Maps Location</b> paayein!
+        </div>
+    </div>
+
+    <!-- Image Preview before sending -->
+    <div id="imagePreviewContainer">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #334155;">Selected Photo:</span>
+        <img id="previewImg" src="" alt="Preview">
+        <button onclick="clearImage()" style="background:#ef4444; color:white; border:none; padding:4px 8px; border-radius:6px; cursor:pointer;">X</button>
+    </div>
+
+    <!-- Input Bar -->
+    <div class="input-area">
+        <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="previewImage(event)">
+        <button class="icon-btn" title="Upload Photo" onclick="document.getElementById('imageInput').click()">📷</button>
+        <button class="icon-btn" id="micBtn" title="Bolkar Poochein" onclick="startVoice()">🎙️</button>
+        <input type="text" id="userInput" placeholder="Jabalpur ke baare mein kuch bhi poochein..." onkeypress="handleKeyPress(event)">
