@@ -11,7 +11,6 @@ h1{font-size:44px;margin:0;color:#4285F4}
 h1 span{color:#EA4335} h1 b{color:#FBBC05} h1 i{color:#34A853;font-style:normal}
 input{width:92%;padding:15px;border-radius:30px;border:1px solid #ddd;font-size:17px;box-shadow:0 2px 10px rgba(0,0,0,0.1);outline:none}
 .btn{padding:12px 18px;border:0;border-radius:25px;background:#f8f9fa;margin:8px 4px;font-size:15px;cursor:pointer}
-.btn2{background:#EA580C;color:white}
 .btnMic{background:#4285F4;color:white}
 .btnPhoto{background:#34A853;color:white}
 #ans{text-align:left;background:#FFF7ED;padding:18px;border-radius:15px;margin-top:20px;line-height:1.8;white-space:pre-line;display:none;font-size:16px}
@@ -36,6 +35,8 @@ input{width:92%;padding:15px;border-radius:30px;border:1px solid #ddd;font-size:
 </div>
 <script>
 let local={
+"best khana":"✅ Best Khana Jabalpur Me\n\n1. Indian Coffee House - South Indian, Dosa\n2. Sagar Gaire - Poha Jalebi, Samosa\n3. Raju Tea Stall, Wright Town - Chai\n4. Gole Bazaar - Chaat, Pani Puri\n5. Firodiya - Sweets\n\nTumhe kya khana hai? Poha, Chaat ya Dosa?",
+"khana":"✅ Best Khana Jabalpur Me\n\n1. Indian Coffee House - South Indian, Dosa\n2. Sagar Gaire - Poha Jalebi, Samosa\n3. Gole Bazaar - Chaat, Pani Puri\n4. Firodiya - Sweets\n5. Wright Town - Chai aur Snacks\n\nBatao kya khana hai?",
 "jabalpur":"✅ Jabalpur\n\nJabalpur Madhya Pradesh ka bahut sundar sheher hai. Ise Sanskardhani kehte hain. Yahan Narmada nadi, Bhedaghat aur Dhuandhar Waterfall bahut famous hai.",
 "college":"✅ Best College Jabalpur\n\n1. Rani Durgavati University (RDVV)\n2. Jabalpur Engineering College (JEC)\n3. Govt. Science College\n4. St. Aloysius College\n5. Mata Gujri Mahila Mahavidyalaya",
 "mausam":"✅ Mausam Jabalpur\n\nJabalpur me abhi mausam aam taur par saaf hai. Garmi me 40-44°C aur sardi me 10-15°C tak jata hai. Barish me Narmada ka nazara sabse sundar lagta hai.",
@@ -45,7 +46,7 @@ let local={
 "virat kohli":"✅ Virat Kohli\n\nVirat Kohli India ke sabse bade cricketer me se ek hain. Unhe King Kohli bhi kehte hain.",
 "madhya pradesh":"✅ Madhya Pradesh\n\nMadhya Pradesh India ke beech me hai. Rajdhani Bhopal hai. Indore, Jabalpur, Gwalior bade sheher hain."
 };
-let quicks=["Jabalpur","Taj Mahal","Virat Kohli","Madhya Pradesh","Narmada River","Best College Jabalpur","Mausam Jabalpur","Bhedaghat"];
+let quicks=["Best Khana Jabalpur Me","Jabalpur","Taj Mahal","Virat Kohli","Madhya Pradesh","Narmada River","Best College Jabalpur","Mausam Jabalpur","Bhedaghat"];
 document.getElementById('quick').innerHTML=quicks.map(k=>`<div class="card" onclick="document.getElementById('q').value='${k}';search()">🔍 ${k}</div>`).join('');
 function voice(){
 let Rec=window.SpeechRecognition||window.webkitSpeechRecognition;
@@ -64,7 +65,7 @@ let f=inp.files[0]; if(!f) return;
 let url=URL.createObjectURL(f);
 let img=document.getElementById('preview'); img.src=url; img.style.display='block';
 let box=document.getElementById('ans'); box.style.display='block';
-box.innerText="✅ Photo mil gayi!\n\nYe photo maine dekh li hai. Ab upar wale dabbe me likho ya bol kar pucho - 'Ye kya hai?' ya 'Is jagah ka naam kya hai?'\n\nJaise - Agar Taj Mahal ki photo hai to likho 'Taj Mahal', main uska jawab de dungi.";
+box.innerText="✅ Photo mil gayi!\n\nYe photo maine dekh li hai. Ab upar wale dabbe me likho ya bol kar pucho - 'Ye kya hai?' ya 'Is jagah ka naam kya hai?'";
 document.getElementById('q').value="Ye photo me kya hai? ";
 document.getElementById('q').focus();
 }
@@ -74,9 +75,10 @@ if(!q) return alert("Pehle kuch likho ya bolo!");
 let box=document.getElementById('ans'); box.style.display='block';
 box.innerText="Dhoondh rahi hun... '"+q+"'... ⏳";
 let low=q.toLowerCase();
+// Pehle khana check karo, phir baaki - taaki khana wala sahi jawab aaye
+if(low.includes("khana")||low.includes("khaana")||low.includes("food")||low.includes("restaurant")||low.includes("hotel")){ box.innerText=local["best khana"]; return; }
 for(let k in local){ if(low.includes(k)){ box.innerText=local[k]; return; } }
 if(low.includes("college")){ box.innerText=local["college"]; return; }
-if(low.includes("photo") || low.includes("ye kya")){ box.innerText="✅ Photo wali help\n\nTumne photo bheji hai. Photo me jo cheez hai uska naam upar likh kar search karo, jaise 'Taj Mahal' ya 'Jabalpur'. Main uska poora jawab yahin de dungi."; return; }
 try{
 let s=await fetch(`https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(q)}&format=json&origin=*`).then(r=>r.json());
 let title=s.query.search[0]?.title;
@@ -85,7 +87,7 @@ let d=await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURI
 if(d.extract){ box.innerText=`✅ ${d.title}\n\n${d.extract}`; return; }
 }
 }catch(e){}
-box.innerText=`✅ ${q}\n\n${q} ke baare me maine dhoonda. Ye bahut interesting topic hai. Jabalpur me iske baare me log bahut baat karte hain.\n\nThoda alag tarike se likh kar pucho, jaise - "${q} kya hai"`;
+box.innerText=`✅ ${q}\n\n${q} ke baare me maine dhoonda. Ye bahut interesting topic hai. Jabalpur me iske baare me log bahut baat karte hain.`;
 }
 </script>
 </body>
