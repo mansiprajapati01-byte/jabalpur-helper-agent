@@ -379,11 +379,83 @@
   <div id="agent-output" style="margin-top:15px; white-space:pre-line; text-align:left;"></div>
 </div>
 
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jabalpur Ghumo - AI Plan Banao</title>
+<style>
+body{font-family:Arial,sans-serif;margin:0;background:#fff7ed;color:#222}
+header{background:#ff5722;color:white;padding:20px;text-align:center}
+header h1{margin:0;font-size:28px}
+header p{margin:5px 0 0}
+section{padding:20px;max-width:800px;margin:auto}
+.card{background:white;border-radius:12px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,0.1);margin-bottom:20px}
+input{width:100%;padding:12px;border:2px solid #ff5722;border-radius:8px;font-size:16px;box-sizing:border-box}
+button{background:#ff5722;color:white;border:none;padding:12px 20px;border-radius:8px;font-size:16px;margin-top:10px;cursor:pointer;width:100%}
+#agent-output{margin-top:15px;background:#fff3e0;padding:15px;border-radius:8px;display:none;line-height:1.6}
+.place{background:#fff;border-radius:12px;padding:15px;margin-bottom:15px;box-shadow:0 2px 8px rgba(0,0,0,0.08)}
+.place h3{margin:0 0 5px;color:#e65100}
+footer{text-align:center;padding:20px;color:#888}
+</style>
+</head>
+<body>
+<header><h1>🙏 Jabalpur Ghumo</h1><p>Bhedaghat • Dhuandhar • Gwarighat • Madan Mahal</p></header>
+<section>
+<div class="card">
+<h2>🤖 AI Se Plan Banao</h2>
+<p>Kuch bhi pucho - Bhedaghat ka plan, sasta hotel, mandir, khana!</p>
+<input type="text" id="agent-input" placeholder="Jaise - Bhedaghat ka 2 din ka plan banao">
+<button id="agentBtn">Plan Banao</button>
+<div id="agent-output"></div>
+</div>
+<div class="place"><h3>1. Bhedaghat - Dhuandhar Falls</h3><p>Boat ₹150 • Best time: Subah 9 baje • Jabalpur se 25 km</p></div>
+<div class="place"><h3>2. Chausath Yogini Mandir</h3><p>Bhedaghat ke paas • 1000 saal purana mandir</p></div>
+<div class="place"><h3>3. Gwarighat - Narmada Aarti</h3><p>Shaam 7 baje Aarti • Chai aur Pakode famous</p></div>
+<div class="place"><h3>4. Madan Mahal Fort</h3><p>Rani Durgavati ka kila • View point best hai</p></div>
+<div class="place"><h3>5. Dumna Nature Park + Bargi Dam</h3><p>Family picnic • Boating • Sunset point</p></div>
+<div class="place"><h3>6. Famous Food</h3><p>Badal Sweets Jalebi • Sadar Bazar Samosa • Gwarighat Chai</p></div>
+</section>
+<footer>Made with ❤️ in Jabalpur</footer>
 <script>
-function runAgent(){
-  let q = document.getElementById('agent-input').value.toLowerCase();
-  let out = document.getElementById('agent-output');
-  let plan = "";
-
-  if(q.includes("bhedaghat")){
-    plan = "🤖 AGENT PLAN - Bhedaghat 1 Day Trip:\n\nSTEP 1: Subah 8 baje - Dhuandhar Falls jao, sabse pehle wahi jao bheed se pehle\nSTEP 2: 10 baje - Marble Rocks me Boating karo - Rs 100/person\nSTEP 3: 1 baje - Lunch - Indian Coffee House, Sadar - Rs 200\nSTEP 4: 4 baje - Ch
+document.addEventListener('DOMContentLoaded', function() {
+  var btn = document.getElementById('agentBtn');
+  var input = document.getElementById('agent-input');
+  var out = document.getElementById('agent-output');
+  btn.addEventListener('click', function() {
+    var raw = input.value.trim();
+    var q = raw.toLowerCase();
+    out.style.display = 'block';
+    if (q === "") { out.innerHTML = "Pehle kuch likho! Jaise - Bhedaghat ka plan banao"; return; }
+    var days = 1;
+    var m = q.match(/(\d+)\s*din/);
+    if (m) days = parseInt(m[1]);
+    var plan = "";
+    var googleLink = "https://www.google.com/search?q=" + encodeURIComponent(raw + " Jabalpur");
+    if (q.includes("bhedaghat") || q.includes("dhuandhar")) {
+      plan = "<b>Bhedaghat " + days + " Din Plan:</b><br>Day 1: Dhuandhar Falls + Boat ₹150<br>Day 2: Chausath Yogini + Gwarighat Aarti<br>";
+      if (days >= 3) plan += "Day 3: Madan Mahal Fort + Shopping<br>";
+      if (days >= 4) plan += "Day 4: Dumna Park + Bargi Dam<br>";
+      plan += "<br>Total: ₹" + (days * 800);
+    } else if (q.includes("hotel") || q.includes("room") || q.includes("sasta") || q.includes("ruk")) {
+      plan = "<b>Saste Hotel Jabalpur:</b><br>1. Hotel Samrat - ₹800<br>2. OYO Bus Stand - ₹600<br>3. Hotel Rishi - ₹1000<br><br><a href='"+googleLink+"' target='_blank' style='color:blue'>Google pe aur hotel dekho -></a>";
+    } else if (q.includes("mandir")) {
+      plan = "<b>Mandir Jabalpur:</b><br>1. Chausath Yogini<br>2. Gwarighat Mandir<br>3. Madan Mahal Mandir<br><br><a href='"+googleLink+"' target='_blank' style='color:blue'>Google pe aur mandir dekho -></a>";
+    } else if (q.includes("kha") || q.includes("food") || q.includes("famous") || q.includes("khaana")) {
+      plan = "<b>Famous Food:</b><br>1. Badal Sweets Jalebi<br>2. Sadar Bazar Samosa<br>3. Gwarighat Chai<br><br><a href='"+googleLink+"' target='_blank' style='color:blue'>Google pe aur food dekho -></a>";
+    } else if (q.includes("plan") || q.includes("jabalpur") || q.includes("trip") || q.includes("ghum") || q.includes("ghoom")) {
+      plan = "<b>Jabalpur " + days + " Din Plan:</b><br>Day 1: Bhedaghat<br>Day 2: Madan Mahal + Gwarighat<br>";
+      if (days >= 3) plan += "Day 3: Dumna + Bargi Dam<br>";
+      if (days >= 4) plan += "Day 4: Shopping + Food Tour<br>";
+      plan += "<br>Tune likha: " + raw;
+    } else {
+      plan = "<b>Mujhe ye pura nahi pata, main Google se la deti hu!</b><br><br>Tune pucha: " + raw + "<br><br><a href='"+googleLink+"' target='_blank' style='color:blue; font-size:18px;'><b>👉 Google pe jawab dekho</b></a>";
+      window.open(googleLink, '_blank');
+    }
+    out.innerHTML = plan;
+  });
+});
+</script>
+</body>
+</html>
